@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "properties": {
+      "cipher": { "type": "string" },
+      "code": { "type": "string" },
+      "id": { "type": "string"},
+      "name": { "type": "string"},
+      "region": { "type": "string" },
+      "seller_type": { "type": "string" }
+    }
+} 

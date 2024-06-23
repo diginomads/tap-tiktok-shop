@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "properties": {
+      "id":{"type":"string"},
+      "buyer_email" : {"type":"string","format":"email"},
+      "buyer_message" : {"type":"string"},
+      "cancel_reason" : {"type":"string"},
+      "user_id" : {"type":"string"},
+      "product_id" : {"type":"string"},
+      "status" : {"type":"string"},
+      "update_time" : {"type":"integer"}
+    }
+  }  
