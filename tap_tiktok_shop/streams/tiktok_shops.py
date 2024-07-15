@@ -1,4 +1,4 @@
-from singer_sdk import typing as th  # JSON Schema typing helpers
+from singer_sdk import typing as th
 from singer_sdk.streams import Stream
 import requests
 

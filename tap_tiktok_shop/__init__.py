@@ -4,10 +4,10 @@ import json
 import singer
 import requests
 from singer import utils, metadata
-from singer.catalog import Catalog, CatalogEntry
-from singer.schema import Schema
-from tap_tiktok_shop.streams.tiktok_shop_orders import TikTokShopOrdersStream
-from tap_tiktok_shop.streams.tiktok_shops import TikTokShops
+# from singer.catalog import Catalog, CatalogEntry
+# from singer import Schema
+from tap_tiktok_shop.context import Context
+from tap_tiktok_shop.exceptions import TikTokError
 
 REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "redirect_uri", "access_token", "refresh_token"]
 LOGGER = singer.get_logger()
@@ -17,14 +17,15 @@ def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 
+# Load schemas from schemas folder
 def load_schemas():
-    """ Load schemas from schemas folder """
     schemas = {}
     for filename in os.listdir(get_abs_path('schemas')):
         path = get_abs_path('schemas') + '/' + filename
-        file_raw = filename.replace('.json', '')
+        schema_name = filename.replace('.json', '')
         with open(path) as file:
-            schemas[file_raw] = Schema.from_dict(json.load(file))
+            schemas[schema_name] = json.load(file)
+
     return schemas
 
 
@@ -62,12 +63,19 @@ def discover():
                 replication_method='INCREMENTAL',
             )
         )
-    return Catalog(streams)
+    return streams
 
 
 def sync(config, state, catalog):
     """ Sync data from tap source """
     # Loop over selected streams in catalog
+
+
+    selected_streams = catalog.get_selected_streams(state)
+    print("Selected Streams:", [stream.tap_stream_id for stream in selected_streams])
+
+
+
     for stream in catalog.get_selected_streams(state):
         LOGGER.info("Syncing stream:" + stream.tap_stream_id)
 
@@ -81,9 +89,11 @@ def sync(config, state, catalog):
         )
 
         if stream.tap_stream_id == 'tiktok_shop_orders':
+            print("TikTok Shop Orders Stream")
             stream_instance = TikTokShopOrdersStream(config)
         elif stream.tap_stream_id == 'tiktok_shop_products':
             stream_instance = TikTokShops(config)
+            ## TODO Add Finance Stream
         else:
             raise Exception(f"Unsupported stream: {stream.tap_stream_id}")
 

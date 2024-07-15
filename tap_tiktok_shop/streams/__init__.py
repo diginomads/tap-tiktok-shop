@@ -1,0 +1,2 @@
+import tap_tiktok_shop.streams.tiktok_shop_orders
+import tap_tiktok_shop.streams.tiktok_shops
