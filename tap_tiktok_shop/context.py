@@ -1,7 +1,7 @@
 import singer
 from singer import metadata
 
-# LOGGER = singer.get_logger()
+LOGGER = singer.get_logger()
 
 class Context():
     config = {}
@@ -35,7 +35,7 @@ class Context():
             # non-int value
             log_msg = ('Failed to parse results_per_page value of "%s" ' +
                        'as an integer, falling back to default of %d')
-            # LOGGER.info(log_msg,
-            #             Context.config['results_per_page'],
-            #             default_results_per_page)
+            LOGGER.info(log_msg,
+                        Context.config['results_per_page'],
+                        default_results_per_page)
         return results_per_page

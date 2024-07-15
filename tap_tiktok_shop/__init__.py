@@ -4,18 +4,14 @@ import json
 import singer
 import requests
 from singer import utils
-# from singer import metadata
+from singer import metadata
 # from singer.catalog import Catalog, CatalogEntry
 # from singer import Schema
 from tap_tiktok_shop.context import Context
 from tap_tiktok_shop.exceptions import TikTokError
 
-print("Hello World")
-
 REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "redirect_uri", "access_token", "refresh_token"]
-# LOGGER = singer.get_logger()
-
-
+LOGGER = singer.get_logger()
 
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
@@ -98,7 +94,7 @@ def sync(config, state, catalog):
     return
 
 
-# @utils.handle_top_exception(LOGGER)
+@utils.handle_top_exception(LOGGER)
 def main():
     # Parse command line arguments
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
