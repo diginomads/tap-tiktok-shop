@@ -3,14 +3,18 @@ import os
 import json
 import singer
 import requests
-from singer import utils, metadata
+from singer import utils
+# from singer import metadata
 # from singer.catalog import Catalog, CatalogEntry
 # from singer import Schema
 from tap_tiktok_shop.context import Context
 from tap_tiktok_shop.exceptions import TikTokError
 
+print("Hello World")
+
 REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "redirect_uri", "access_token", "refresh_token"]
-LOGGER = singer.get_logger()
+# LOGGER = singer.get_logger()
+
 
 
 def get_abs_path(path):
@@ -32,38 +36,26 @@ def load_schemas():
 def discover():
     raw_schemas = load_schemas()
     streams = []
-    for stream_id, schema in raw_schemas.items():
-        if stream_id == 'tiktok_shop_orders':
-            key_properties = ['id']
-            replication_key = 'update_time'
-        elif stream_id == 'tiktok_shops':
-            key_properties = ['id']
-            replication_key = '' # No replication key
-        else:
-            raise Exception(f"Unsupported stream: {stream_id}")
-        
-        stream_metadata = metadata.get_standard_metadata(
-        schema=schema.to_dict(),
-        key_properties=key_properties,
-        valid_replication_keys=[replication_key]
-        )
-        streams.append(
-            CatalogEntry(
-                tap_stream_id=stream_id,
-                stream=stream_id,
-                schema=schema,
-                key_properties=key_properties,
-                metadata=stream_metadata,
-                replication_key=replication_key,
-                is_view=False,
-                database=None,
-                table=None,
-                row_count=None,
-                stream_alias=None,
-                replication_method='INCREMENTAL',
-            )
-        )
-    return streams
+
+    for schema_name, schema in raw_schemas.items():
+        if schema_name not in Context.stream_objects:
+            continue
+
+        stream = Context.stream_objects[schema_name]()
+
+        # create and add catalog entry
+        catalog_entry = {
+            'stream': schema_name,
+            'tap_stream_id': schema_name,
+            'schema': schema,
+            'metadata' : stream.metadata,
+            'key_properties': stream.key_properties,
+            'replication_key': stream.replication_key,
+            'replication_method': stream.replication_method
+        }
+        streams.append(catalog_entry)
+
+    return {'streams': streams}
 
 
 def sync(config, state, catalog):
@@ -77,7 +69,7 @@ def sync(config, state, catalog):
 
 
     for stream in catalog.get_selected_streams(state):
-        LOGGER.info("Syncing stream:" + stream.tap_stream_id)
+        # LOGGER.info("Syncing stream:" + stream.tap_stream_id)
 
         bookmark_column = stream.replication_key
         is_sorted = True  # TODO: indicate whether data is sorted ascending on bookmark value
@@ -106,7 +98,7 @@ def sync(config, state, catalog):
     return
 
 
-@utils.handle_top_exception(LOGGER)
+# @utils.handle_top_exception(LOGGER)
 def main():
     # Parse command line arguments
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
