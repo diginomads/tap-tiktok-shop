@@ -1,6 +1,6 @@
-from singer_sdk import typing as th  # JSON Schema typing helpers
-from singer_sdk.streams import Stream
 import requests
+from tap_tiktok_shop.context import Context
+from tap_tiktok_shop.streams.base import Stream
 
 class TikTokShopOrdersStream(Stream):
     name = "tiktok_shop_orders"
@@ -32,3 +32,5 @@ class TikTokShopOrdersStream(Stream):
         data = response.json()
         for order in data["data"]["orders"]:
             yield order
+
+Context.stream_objects['tiktok_shop_orders'] = TikTokShopOrdersStream

@@ -9,8 +9,11 @@ from singer import metadata
 # from singer import Schema
 from tap_tiktok_shop.context import Context
 from tap_tiktok_shop.exceptions import TikTokError
+import tap_tiktok_shop.streams # Load stream objects into Context
+
 
 REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "redirect_uri", "access_token", "refresh_token"]
+# REQUIRED_CONFIG_KEYS = ["access_token", "api_base_url"]
 LOGGER = singer.get_logger()
 
 def get_abs_path(path):
@@ -32,9 +35,11 @@ def load_schemas():
 def discover():
     raw_schemas = load_schemas()
     streams = []
+    print(Context.stream_objects)
 
     for schema_name, schema in raw_schemas.items():
         if schema_name not in Context.stream_objects:
+            print(f"Skipping {schema_name} as it is not a valid stream")
             continue
 
         stream = Context.stream_objects[schema_name]()
@@ -102,15 +107,18 @@ def main():
     # If discover flag was passed, run discovery mode and dump output to stdout
     if args.discover:
         catalog = discover()
-        catalog.dump()
+        print(json.dumps(catalog, indent=2))
     # Otherwise run in sync mode
     else:
+        Context.tap_start = utils.now()
         if args.catalog:
-            catalog = args.catalog
+            Context.catalog = args.catalog.to_dict()
         else:
-            catalog = discover()
-        sync(args.config, args.state, catalog)
+            Context.catalog = discover()
 
+        Context.config = args.config
+        Context.state = args.state
+        sync()
 
 if __name__ == "__main__":
     main()

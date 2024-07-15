@@ -1,6 +1,7 @@
 from singer_sdk import typing as th
 from singer_sdk.streams import Stream
 import requests
+from tap_tiktok_shop.context import Context
 
 class TikTokShops(Stream):
     name = "tiktok_shops"
@@ -28,3 +29,5 @@ class TikTokShops(Stream):
         else:
             for shop in data["data"]["shops"]:
                 yield shop
+
+Context.stream_objects['tiktok_shops'] = TikTokShops
