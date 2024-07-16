@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="tap-tiktok-shop",
@@ -8,19 +8,19 @@ setup(
     author="Stitch",
     url="http://singer.io",
     classifiers=["Programming Language :: Python :: 3 :: Only"],
-    py_modules=["tap_tiktok_shop"],
     install_requires=[
-        # NB: Pin these to a more specific version for tap reliability
         "singer-python",
         "requests",
+        "singer-sdk",
+        "jsonschema"
     ],
     entry_points="""
     [console_scripts]
-    tap-tiktok-shop=tap_tiktok_shop:main
+    tap-tiktok-shop=tap_tiktok_shop.__init__:main
     """,
-    packages=["tap_tiktok_shop"],
-    package_data = {
-        "schemas": ["tap_tiktok_shop/schemas/*.json"]
+    packages=find_packages(),
+    package_data={
+        "tap_tiktok_shop": ["schemas/*.json"]
     },
     include_package_data=True,
 )

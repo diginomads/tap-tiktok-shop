@@ -1,6 +1,10 @@
 import requests
-from tap_tiktok_shop.context import Context
-from tap_tiktok_shop.streams.base import Stream
+#from tap_tiktok_shop.context import Context
+#from tap_tiktok_shop.streams.base import Stream
+import singer_sdk
+from singer_sdk import Tap, Stream
+from singer_sdk import typing as th
+from typing import Optional, Iterable, Dict
 
 class TikTokShopOrdersStream(Stream):
     name = "tiktok_shop_orders"
@@ -17,9 +21,9 @@ class TikTokShopOrdersStream(Stream):
         th.Property("update_time", th.IntegerType)
     ).to_dict()
 
-    def get_records(self):
+    def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, any]]:
         headers = {
-            "Authorization": f"Bearer {self.config['access_token']}",
+            "Authorization": f"Bearer {"TTP_L7mDHwAAAADQviXu4klyvPIVyjAP4Y8zmpnVOKqrvl44M7PhNBemneftHlqY7CqWO2QbKZAUobuw5WqO5lGekPJn1HBKg7GpcUskRanv5mjETdKssETcfAYR510gU7H2uIYxeWLWFos_zqOtoKUci2QJngCfkq-UW2M6M2MafIEj7aMmW3VqJg"}",
             "Content-Type": "application/json"
         }
         params = {
@@ -33,4 +37,4 @@ class TikTokShopOrdersStream(Stream):
         for order in data["data"]["orders"]:
             yield order
 
-Context.stream_objects['tiktok_shop_orders'] = TikTokShopOrdersStream
+#Context.stream_objects['tiktok_shop_orders'] = TikTokShopOrdersStream
