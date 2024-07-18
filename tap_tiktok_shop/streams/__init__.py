@@ -1,3 +1,4 @@
 from .tiktok_shop_orders import TikTokShopOrdersStream
 from .tiktok_shops import TikTokShops
 from .finance_statements_stream import FinanceStatementsStream
+from .finance_payments_stream import FinancePaymentsStream
