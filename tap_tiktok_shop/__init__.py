@@ -5,7 +5,7 @@ import os
 import argparse
 from singer_sdk import Tap, Stream
 from singer_sdk import typing as th
-from tap_tiktok_shop.streams import FinanceStatementsStream, FinancePaymentsStream
+from tap_tiktok_shop.streams import FinanceStatementsStream, FinancePaymentsStream, FinanceWithdrawalsStream
 
 class TapTikTokShop(Tap):
     name = "tap-tiktok-shop"
@@ -21,6 +21,7 @@ class TapTikTokShop(Tap):
         return [
             FinanceStatementsStream(tap=self),
             FinancePaymentsStream(tap=self),
+            FinanceWithdrawalsStream(tap=self)
         ]
 
 def load_config(config_path):

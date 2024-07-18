@@ -70,11 +70,7 @@ class FinancePaymentsStream(Stream):
 
         # Make the GET request
         response = requests.get(full_url, headers=headers)
-        # Print the full request object
-        print("headers: ", response.request.headers)
-        print("body: ", response.request.body)
-        print("url: ", response.request.url)
-
+        
         print("response:", response.text)
 
         if response.status_code == 401:
