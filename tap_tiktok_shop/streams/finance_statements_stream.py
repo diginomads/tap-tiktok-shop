@@ -30,7 +30,7 @@ class FinanceStatementsStream(Stream):
 
     def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, any]]:
 
-        settlements_url = self.config['base_url']+'/api/finance/settlements/search'
+        settlements_url = self.config['base_url']+'/finance/202309/statements'
         timestamp = str(int(time.time()))
        
         params = {
