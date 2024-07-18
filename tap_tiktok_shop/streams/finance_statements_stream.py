@@ -4,7 +4,7 @@ from singer_sdk import Stream
 from singer_sdk import typing as th
 from typing import Optional, Iterable, Dict
 import json, time
-from tap_tiktok_shop import generate_signature
+from tap_tiktok_shop.generate_signature import generate_signature
 import urllib.parse
 from urllib.parse import urlencode, urlparse, parse_qs
 import requests
@@ -30,38 +30,35 @@ class FinanceStatementsStream(Stream):
 
     def get_records(self, context: Optional[dict]) -> Iterable[Dict[str, any]]:
 
-        settlements_url = self.config['base_url']+'/finance/202309/statements'
+        statements_url = self.config['base_url']+'/finance/202309/statements'
         timestamp = str(int(time.time()))
        
         params = {
             'app_key': self.config['app_key'],
             'access_token': self.config['access_token'],
-            'shop_id': '7495660122206341889',
             'timestamp': timestamp,
-            'version': '202212',
+            "sort_field": "statement_time",
+            "shop_cipher": "TTP_tD0FYAAAAABIH2BTJJSHZoaLly5In-qW",
+            "version":202309
         }
         headers = {
             'x-tts-access-token': self.config['access_token'],
             "Content-Type": "application/json"
         }
 
-        data = {
-            "sort_field": "statement_time",
-        }
-
-        signature = generate_signature(settlements_url, params,self.config['app_secret'])
+        signature = generate_signature(statements_url, params,self.config['app_secret'])
         params['sign'] = signature
         
         # Form the complete URL with parameters
-        full_url = f"{settlements_url}?{urlencode(params)}"
+        full_url = f"{statements_url}?{urlencode(params)}"
 
 
         # # Set headers
         # headers = CaseInsensitiveDict()
         # headers["x-tts-access-token"] = self.config['access_token']
 
-        # Make the POST request
-        response = requests.get(full_url, headers=headers, data=data)
+        # Make the GET request
+        response = requests.get(full_url, headers=headers)
         # Print the full request object
         print("headers: ", response.request.headers)
         print("body: ", response.request.body)

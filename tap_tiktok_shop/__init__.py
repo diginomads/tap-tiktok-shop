@@ -6,6 +6,7 @@ import argparse
 from singer_sdk import Tap, Stream
 from singer_sdk import typing as th
 from tap_tiktok_shop.streams import TikTokShops
+from tap_tiktok_shop.streams import FinanceStatementsStream
 
 class TapTikTokShop(Tap):
     name = "tap-tiktok-shop"
@@ -19,7 +20,8 @@ class TapTikTokShop(Tap):
     def discover_streams(self) -> list[Stream]:
         self.logger.info(f"Configuration: {self.config}")
         return [
-            TikTokShops(tap=self)
+            FinanceStatementsStream(tap=self),
+            #TikTokShops(tap=self)
             #TikTokShopOrdersStream(tap=self),
         ]
 
